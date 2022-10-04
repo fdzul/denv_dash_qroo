@@ -51,7 +51,6 @@ neb <- boldenr::read_dataset_bol(path = path_vect,
 # Step 1. load the hotspots dengue cases ####
 
 load("C:/Users/HOME/Dropbox/hotspots_2021/8.RData/cases_hotspots_agebs19.RData")
-#load("C:/Users/HOME/Dropbox/hotspots_2021/8.RData/hotspots_ageb_31_yucatan.RData")
 cases_hotspots_agebs19 <- cases_hotspots_agebs19 |>
     sf::st_make_valid()
 
@@ -585,6 +584,64 @@ ggplot2::ggplot() +
                     ylim = c(19.5, 22), 
                      expand = FALSE)
 
+```
+#### **<span style="color:#7d9029">Indicador de Ovitrampas en Mérida</span>**
+```{r indicador_ovitrampas_merida, echo=FALSE, error=TRUE, message=FALSE,dpi=300, warning=FALSE, fig.align = "center", out.width="90%", fig.show = "hold"}
+
+
+##  indicar ovitrampas
+library(ggplot2)
+boldenr::ovitraps_indicator(x = ovis,
+                            nom_loc = "Chetumal",
+                            all = FALSE)
+
+```
+
+#### **<span style="color:#7d9029"> Manzanas Calientes del área urbana de Mérida en la semana `r lubridate::epiweek(Sys.Date())-1`</span>**
+```{r manzanas_calientes_merida, echo=FALSE, error=TRUE, message=FALSE,dpi=300, warning=FALSE, fig.align = "center", out.width="90%", fig.show = "hold"}
+
+# Step 1. load the blocks #####
+load("C:/Users/HOME/OneDrive/automatic_read_ine_2010/8.RData/block_ine10_mx.RData")
+
+
+# Step 1.1 extract the block  state ###
+
+x <- blocks_ine10_mx |> dplyr::filter(ENTIDAD == 23)
+
+
+# Step 2. hotblocks #####
+boldenr::hot_blocks(loc = "Chetumal",
+                    x = ovis,
+                    blocks = x,
+                    cve_mpo = "4",
+                    sem1 = lubridate::epiweek(Sys.time())-1,
+                    risk = TRUE)
+
+
+
+```
+
+
+#### **<span style="color:#7d9029"> Predicción del Número de Huevos en el área urbana de Mérida en la semana `r lubridate::epiweek(Sys.Date())-1`</span>**
+```{r eggs_prediction_merida, echo=FALSE, error=FALSE, message=FALSE,dpi=300, warning=FALSE, fig.align = "center", out.width="90%", fig.show = "hold"}
+deneggs::eggs_hotspots(path_lect = path_vect,
+                       cve_ent = 23,
+                       locality  = "Chetumal",
+                       path_coord = path_coord,
+                       longitude  = "Pocision_X",
+                       latitude =  "Pocision_Y",
+                       aproximation = "gaussian",
+                       integration = "eb",
+                       fam = "zeroinflatednbinomial1",
+                       k = 30,
+                       palette_vir  = "magma",
+                       leg_title = "Huevos",
+                       plot = FALSE,
+                       hist_dataset = FALSE, ##### NOTA
+                       sem = lubridate::epiweek(Sys.Date())-1,
+                       var = "eggs",
+                       cell_size = 2000,
+                       alpha = .99)$map
 ```
 
 </div>
