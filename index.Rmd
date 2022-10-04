@@ -26,7 +26,7 @@ source("C:/Users/HOME/Dropbox/r_developments/r_dashboards/github_pages/test_denv
 library(magrittr)
 
 # define the dataset 
-path_vect <- "C:/Users/HOME/Dropbox/cenaprece_datasets/2022/31_yucatan"
+path_vect <- "C:/Users/HOME/Dropbox/cenaprece_datasets/2022/23_quintana_roo"
 path_coord <- paste(path_vect, "DescargaOvitrampasMesFco.txt", sep = "/")
 # Load the ovitrap dataset 
 
@@ -90,7 +90,7 @@ intensity_function <- function(x){
 }
 
 # Step 7. load the dengue vector hotspots ####
-#load("C:/Users/HOME/OneDrive/proyects/hotspots_eggs/8.RData/31_yucatan/betas/31_yucatan_zinb1_betas.RData")
+load("C:/Users/HOME/OneDrive/proyects/hotspots_eggs/8.RData/23_quintana_roo/betas/23_quintana_roo_zinb1_betas.RData")
 
 ```
 
@@ -539,7 +539,7 @@ Column {.tabset}
   <p></p>
 #### **<span style="color:#7d9029">Áreas urbanas con Vigilancia Entomológica </span>**
 ```{r echo=FALSE, error=TRUE, message=FALSE,dpi=300, warning=FALSE, fig.align = "center",out.width="90%", cache = TRUE, fig.show = "hold"}
-# 1.load the AGEM of veracruz #####
+# 1.load the AGEM of state #####
 library(magrittr)
 library(sf)
 mun <- rgeomex::AGEM_inegi19_mx  |>
@@ -570,7 +570,7 @@ y <- readxl::read_xls(path = "Datasets/repMetas.xls",
     dplyr::filter(`CON OVITRAMPAS` == "Sí")
 urb_loc_hr_ovi <- urb_loc  |>
     dplyr::filter(CVE_MUN %in% c(y$cve_mun))  |>
-    dplyr::filter(CVE_LOC %in% c(y$cve_loc, "0037"))
+    dplyr::filter(CVE_LOC %in% c(y$cve_loc))
 
 # Step 5. visualization ####
 ggplot2::ggplot() +
