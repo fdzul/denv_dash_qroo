@@ -2226,3 +2226,20 @@ plotly::ggplotly(ggplot2::ggplot() +
 
 
 
+**Dengue Risk Maps**
+=====================================  
+
+Column {.tabset}
+-------------------------------------
+
+### **<span style="color:#7d9029">Chetumal</span>**
+
+```{r, risk_map_merida, echo=FALSE}
+risk <- risk_agebs(spde_model = betas_23_quintana_roo,
+                          hotspots = cases_hotspots_agebs19,
+                          locality = "Chetumal",
+                          cve_ent = "23",
+                          intensity_perc = 25)
+risk_map(risk = risk, staticmap = FALSE)
+```
+
