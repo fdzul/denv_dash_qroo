@@ -980,17 +980,18 @@ boldenr::cl_table(x = cl, jur = "Felipe Carrillo Puerto", mun = TRUE)
 ```{r ulv_juri, echo = FALSE, error = TRUE, cache = TRUE,  fig.align = "center", message=FALSE, dpi=300, warning = FALSE,fig.show = "hold"}
 boldenr::tb_ulv(x = neb, jur = NULL, mun = FALSE, coldfog = TRUE)
 ```  
- 
+
+<hr style="height:2px;border-width:0;color:#330019;background-color:#330019"> 
 ####  **<span style="color:#7d9029">Avances de Nebulizacion en Frío (UBV)por Municipio de la Jurisdición 01 Chetumal </span>**
 ```{r ulv_merida, echo = FALSE, error = TRUE, cache = TRUE,  fig.align = "center", message=FALSE, dpi=300, warning = FALSE,fig.show = "hold"}
 boldenr::tb_ulv(x = neb, jur = "Chetumal", mun = TRUE, coldfog = TRUE)
 ``` 
-
+<hr style="height:2px;border-width:0;color:#330019;background-color:#330019"> 
 ####  **<span style="color:#7d9029">Avances de Nebulizacion en Frío (UBV) por Municipio de la Jurisdición 02 Juarez </span>**
 ```{r ulv_juarez, echo = FALSE, error = TRUE, cache = TRUE,  fig.align = "center", message=FALSE, dpi=300, warning = FALSE,fig.show = "hold"}
 boldenr::tb_ulv(x = neb, jur = "Juarez", mun = TRUE, coldfog = TRUE)
 ``` 
-
+<hr style="height:2px;border-width:0;color:#330019;background-color:#330019"> 
 ####  **<span style="color:#7d9029">Avances de Nebulizacion en Frío (UBV) por Municipio de la Jurisdición 03 Ticul</span>**
 ```{r ulv_carrillo_puerto, echo = FALSE, error = TRUE, cache = TRUE,  fig.align = "center", message=FALSE, dpi=300, warning = FALSE,fig.show = "hold"}
 boldenr::tb_ulv(x = neb, jur = "Felipe Carrillo Puerto", mun = TRUE, coldfog = TRUE)
@@ -1001,4 +1002,56 @@ boldenr::tb_ulv(x = neb, jur = "Felipe Carrillo Puerto", mun = TRUE, coldfog = T
 </html>
 
 
+### **<span style="color:#660033">Termonebulización</span>**
+<html>
+<head>
+<style>
+.myDiv1 {
+  border: 2px outset darkgreen;
+  background-color: white;
+  text-align: center;
+}
+</style>
+</head>
+<body>
 
+<div class="myDiv1">
+  <h2></h2>
+  <p></p>
+  
+####  **<span style="color:#7d9029">Termonubulización por Jurisdición Sanitaria</span>**
+```{r termo_yucatan, echo = FALSE, error = TRUE, cache = TRUE,  fig.align = "center", message=FALSE, dpi=300, warning = FALSE,fig.show = "hold"}
+boldenr::tb_ulv(x = neb, jur = NULL, mun = FALSE, coldfog = FALSE)
+```  
+ <hr style="height:2px;border-width:0;color:#330019;background-color:#330019">
+ 
+####  **<span style="color:#7d9029">Termonebulización Municipio de la Jurisdición 01 Chetumal</span>**
+```{r termo_chetumal, echo = FALSE, error = TRUE, cache = TRUE,  fig.align = "center", message=FALSE, dpi=300, warning = FALSE,fig.show = "hold"}
+boldenr::tb_ulv(x = neb, jur = "Chetumal", mun = TRUE, coldfog = FALSE)
+``` 
+<hr style="height:2px;border-width:0;color:#330019;background-color:#330019">
+
+####  **<span style="color:#7d9029">Termonebulización por Municipio de la Jurisdición 02 Juárez</span>**
+```{r termo_juarez, echo = FALSE, error = TRUE, cache = TRUE,  fig.align = "center", message=FALSE, dpi=300, warning = FALSE,fig.show = "hold"}
+boldenr::tb_ulv(x = neb, jur = "Juarez", mun = TRUE, coldfog = FALSE)
+``` 
+
+<hr style="height:2px;border-width:0;color:#330019;background-color:#330019">
+
+####  **<span style="color:#7d9029">Termonebulización por Municipio de la Jurisdición 03 Felipe Carrillo Puerto</span>**
+```{r termo_carrillo_puerto, echo = FALSE, error = TRUE, cache = TRUE,  fig.align = "center", message=FALSE, dpi=300, warning = FALSE,fig.show = "hold"}
+boldenr::tb_ulv(x = neb, jur = "Felipe Carrillo Puerto", mun = TRUE, coldfog = FALSE)
+``` 
+
+</div>
+</body>
+</html> 
+
+
+# **Hotspots de la Transmisión de Dengue**
+
+Column {.tabset}
+------------------------------------
+
+
+### **<span style="color:#990000">Chetumal</span>**
