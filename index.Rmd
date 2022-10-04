@@ -765,6 +765,80 @@ deneggs::eggs_hotspots(path_lect = path_vect,
                        cell_size = 2000,
                        alpha = .99)$map
 ```
+
+
+#### **<span style="color:#7d9029">Indicador de Ovitrampas en Tulum</span>**
+```{r indicador_ovitrampas_tulum, echo=FALSE, error=TRUE, message=FALSE,dpi=300, warning=FALSE, fig.align = "center", out.width="90%", fig.show = "hold"}
+
+
+##  indicar ovitrampas
+library(ggplot2)
+boldenr::ovitraps_indicator(x = ovis,
+                            nom_loc = "Tulum",
+                            all = FALSE)
+
+```
+
+
+#### **<span style="color:#7d9029"> Predicción del Número de Huevos en el área urbana de tulum en la semana `r lubridate::epiweek(Sys.Date())-1`</span>**
+```{r eggs_prediction_tulum, echo=FALSE, error=FALSE, message=FALSE,dpi=300, warning=FALSE, fig.align = "center", out.width="90%", fig.show = "hold"}
+deneggs::eggs_hotspots(path_lect = path_vect,
+                       cve_ent = 23,
+                       locality  = "Tulum",
+                       path_coord = path_coord,
+                       longitude  = "Pocision_X",
+                       latitude =  "Pocision_Y",
+                       aproximation = "gaussian",
+                       integration = "eb",
+                       fam = "zeroinflatednbinomial1",
+                       k = 30,
+                       palette_vir  = "magma",
+                       leg_title = "Huevos",
+                       plot = FALSE,
+                       hist_dataset = FALSE, ##### NOTA
+                       sem = lubridate::epiweek(Sys.Date())-1,
+                       var = "eggs",
+                       cell_size = 2000,
+                       alpha = .99)$map
+```
+
+
+#### **<span style="color:#7d9029">Indicador de Ovitrampas en Felipe Carrillo Puerto</span>**
+```{r indicador_ovitrampas_carrillo_puerto, echo=FALSE, error=TRUE, message=FALSE,dpi=300, warning=FALSE, fig.align = "center", out.width="90%", fig.show = "hold"}
+
+
+##  indicar ovitrampas
+library(ggplot2)
+boldenr::ovitraps_indicator(x = ovis,
+                            nom_loc = "Felipe Carrillo Puerto",
+                            all = FALSE)
+
+```
+
+
+#### **<span style="color:#7d9029"> Predicción del Número de Huevos en el área urbana de Felipe Carrillo Puerto en la semana `r lubridate::epiweek(Sys.Date())-1`</span>**
+```{r eggs_prediction_carrillo_puerto, echo=FALSE, error=FALSE, message=FALSE,dpi=300, warning=FALSE, fig.align = "center", out.width="90%", fig.show = "hold"}
+deneggs::eggs_hotspots(path_lect = path_vect,
+                       cve_ent = 23,
+                       locality  = "Felipe Carrillo Puerto",
+                       path_coord = path_coord,
+                       longitude  = "Pocision_X",
+                       latitude =  "Pocision_Y",
+                       aproximation = "gaussian",
+                       integration = "eb",
+                       fam = "zeroinflatednbinomial1",
+                       k = 30,
+                       palette_vir  = "magma",
+                       leg_title = "Huevos",
+                       plot = FALSE,
+                       hist_dataset = FALSE, ##### NOTA
+                       sem = lubridate::epiweek(Sys.Date())-1,
+                       var = "eggs",
+                       cell_size = 2000,
+                       alpha = .99)$map
+```
+
+
 </div>
 </body>
 </html>
