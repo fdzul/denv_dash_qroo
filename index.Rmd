@@ -296,5 +296,95 @@ heatmap_hospitalizados(dataset = x,
 </body>
 </html>
 
+### **<span style="color:#7d9029">Canal Endémico </span>**
+<html>
+<head>
+<style>
+.myDiv1 {
+  border: 2px outset darkgreen;
+  background-color: darkgreen;
+  text-align: center;
+}
+</style>
+</head>
+<body>
 
+<div class="myDiv1">
+  <h2></h2>
+  <p></p>
+#### **<span style="color:#7d9029">Canal Endémico Estatal </span>**
+```{r}
+load("C:/Users/HOME/OneDrive/automatic_read_sinave/8.RData/epid_channel_data_js.RData")
+plotly::ggplotly(boldenr::epi_channel(x = boldenr::dendata_epichannel,
+                                      edo = "QUINTANA ROO", 
+                                      jur = NULL,
+                                      y = x,
+                                      year1 = 2021,
+                                      year2 = 2022,
+                                      x_epi = 34, y_epi = 200,
+                                      x_alerta = 40, y_alerta = 120, 
+                                      x_seg = 40, y_seg = 40,
+                                      x_exito = 37, y_exito = 5))
+
+
+
+```
+
+#### **<span style="color:#7d9029">Canal Endémico Jurisdicción Juárez </span>**
+```{r epi_channel_juarez}
+load("C:/Users/HOME/OneDrive/automatic_read_sinave/8.RData/epid_channel_data_js.RData")
+plotly::ggplotly(boldenr::epi_channel(x = y,
+                                      edo = "QUINTANA ROO", 
+                                      jur = "JUAREZ",
+                                      mpo = NULL,
+                                      y = x,
+                                      year1 = 2021,
+                                      year2 = 2022,
+                                      x_epi = 20, y_epi = 90,
+                                      x_alerta = 36, y_alerta = 50, 
+                                      x_seg = 35, y_seg = 15,
+                                      x_exito = 42, y_exito = 1))
+
+```
+
+#### **<span style="color:#7d9029">Canal Endémico Jurisdicción Chetumal </span>**
+```{r epi_channel_chetumal}
+load("C:/Users/HOME/OneDrive/automatic_read_sinave/8.RData/epid_channel_data_js.RData")
+
+plotly::ggplotly(boldenr::epi_channel(x = y,
+                                      edo = "QUINTANA ROO", 
+                                      jur = "CHETUMAL",
+                                      mpo = NULL,
+                                      y = x,
+                                      year1 = 2021,
+                                      year2 = 2022,
+                                      x_epi = 35, y_epi = 25,
+                                      x_alerta = 36, y_alerta = 16, 
+                                      x_seg = 40, y_seg = 10,
+                                      x_exito = 42, y_exito = 1))
+
+```
+
+#### **<span style="color:#7d9029">Canal Endémico Jurisdicción Felipe Carrillo Puerto </span>**
+```{r epi_channel_carrillo_puerto}
+load("C:/Users/HOME/OneDrive/automatic_read_sinave/8.RData/epid_channel_data_js.RData")
+
+plotly::ggplotly(boldenr::epi_channel(x = y,
+                                      edo = "QUINTANA ROO", 
+                                      jur = "FELIPE CARRILLO PUERTO",
+                                      mpo = NULL,
+                                      y = x,
+                                      year1 = 2021,
+                                      year2 = 2022,
+                                      x_epi = 35, y_epi = 25,
+                                      x_alerta = 36, y_alerta = 16, 
+                                      x_seg = 40, y_seg = 10,
+                                      x_exito = 42, y_exito = 1))
+
+```
+
+
+</div>
+</body>
+</html>
 
