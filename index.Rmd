@@ -1,0 +1,300 @@
+---
+title: "Programa de Prevención y Control del Dengue de Quintana Roo"
+output: 
+  flexdashboard::flex_dashboard:
+      theme: flatly
+output_dir: docs
+cover-image: images/cover.jpg
+---
+
+
+
+```{r setup}
+
+# Load the dengue dataset 
+x <- boldenr::read_dataset_bol(path = "C:/Users/HOME/OneDrive/datasets/DGE/arbo/",
+                                dataset = "sinave")
+
+# load the heatmap confirmados y hospitalizados function 
+source('C:/Users/HOME/Dropbox/r_developments/r_dashboards/github_pages/test_dashboard/3.Functions/heatmap_confirmados.R')
+
+# Step 2. load the function ####
+source("C:/Users/HOME/Dropbox/r_developments/r_dashboards/github_pages/test_denv_dash_yuc/functions/heatmap_hospitalizados.R")
+
+
+
+library(magrittr)
+
+# define the dataset 
+path_vect <- "C:/Users/HOME/Dropbox/cenaprece_datasets/2022/31_yucatan"
+path_coord <- paste(path_vect, "DescargaOvitrampasMesFco.txt", sep = "/")
+# Load the ovitrap dataset 
+
+ovis <- boldenr::read_dataset_bol(path = path_vect,
+                                 dataset = "vectores",
+                                 inf = "Lecturas")
+
+# load the blocks #####
+load("C:/Users/HOME/OneDrive/automatic_read_ine_2010/8.RData/block_ine10_mx.RData")
+
+# load the control larvario dataset
+cl <- boldenr::read_dataset_bol(path = path_vect, 
+                                dataset = "vectores",
+                                inf = "Control")
+
+# Load the ulv dataset ####
+neb <- boldenr::read_dataset_bol(path = path_vect, 
+                                 dataset = "vectores",
+                                 inf = "Nebulizacion")
+
+#####################
+# Step 1. load the hotspots dengue cases ####
+
+load("C:/Users/HOME/Dropbox/hotspots_2021/8.RData/cases_hotspots_agebs19.RData")
+#load("C:/Users/HOME/Dropbox/hotspots_2021/8.RData/hotspots_ageb_31_yucatan.RData")
+cases_hotspots_agebs19 <- cases_hotspots_agebs19 |>
+    sf::st_make_valid()
+
+# Step 2. load the risk_ageb function ####
+source('C:/Users/HOME/Dropbox/r_developments/r_dashboards/github_pages/test_dashboard/3.Functions/risk_agebs.R')
+
+# Step 3. load the risk_map function ####
+source("C:/Users/HOME/OneDrive/proyects/hotspots/3.Functions/risk_map.R")
+
+# Step 4. load the hotspots map ####
+source("C:/Users/HOME/Dropbox/r_developments/r_dashboards/github_pages/test_dashboard/3.Functions/hotspots_map.R")
+
+# Step 5. create the function for extract the locality ####
+extract_locality <- function(cve_edo, locality){
+    rgeomex::loc_inegi19_mx |>
+        dplyr::filter(CVE_ENT %in% c(cve_edo)) |>
+        dplyr::filter(NOMGEO %in% c(rgeomex::find_most_similar_string(locality, unique(NOMGEO)))) |>
+        sf::st_make_valid()
+}
+
+# Step 6. define the function for eggs intensity ##### 
+intensity_function <- function(x){
+    y <- x |>
+        dplyr::mutate(hotspots_binary = ifelse(hotspots == "Hotspots", 1, 0)) |>
+        as.data.frame() |>
+        dplyr::select(x, y, week, hotspots_binary) |>
+        tidyr::pivot_wider(id_cols = c(x, y),
+                           names_from = "week",
+                           #names_prefix = "hotspots",
+                           values_from = "hotspots_binary") |>
+        as.data.frame() 
+    
+    y$intensity <- rowSums(y |> dplyr::select(-1, -2))
+    y$per_intensity <- round((y$intensity/ncol(y |> dplyr::select(-1, -2, -intensity)))*100,digits = 1)
+    y |> dplyr::select(x, y, intensity,per_intensity)
+}
+
+# Step 7. load the dengue vector hotspots ####
+#load("C:/Users/HOME/OneDrive/proyects/hotspots_eggs/8.RData/31_yucatan/betas/31_yucatan_zinb1_betas.RData")
+
+```
+
+```{r libraris}
+options(shiny.maxRequestSize=30*1024^2)
+library(formattable)
+library(tmap)
+library(rmarkdown)
+library(knitr)
+library(shiny)
+library(flexdashboard)
+library(plotly)
+library(boldenr)
+library(magrittr)
+library(leaflet)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+library(dash)
+library(ECharts2Shiny)
+```
+
+
+
+**Vigilancia Epidemiológica**
+=====================================  
+
+Column {.tabset}
+------------------------------------
+
+
+### **<span style="color:#7d9029"> Casos por Estado </span>**
+<html>
+<head>
+<style>
+</style>
+</head>
+<body>
+<div >
+  <h2></h2>
+  <p></p>
+
+
+<div style = "display: grid; width: 1px; grid-template-columns: 700px 700px; align-items: start; justify-content: space-between;">
+#### **<span style="color:blue"> Treemap de casos confirmados </span>**
+```{r treemap_national, out.width="100%", out.height="100%"}
+x  |>
+    dplyr::filter(ANO == 2022)  |>
+    dplyr::filter(!DES_EDO_RES %in% c("OTROS PAISES", 
+                                      "OTROS PAISES DE LATINOAMERICA",
+                                      "ESTADOS UNIDOS DE NORTEAMERICA"))  |>
+    dplyr::filter(DES_DIAG_FINAL %in% 
+                      c("DENGUE CON SIGNOS DE ALARMA", "DENGUE NO GRAVE", 
+                        "DENGUE GRAVE"))  |>
+    dplyr::group_by(DES_EDO_RES,DES_DIAG_FINAL)  |>
+    dplyr::summarise(value = dplyr::n(), 
+                     .groups = "drop")  |>
+    dplyr::mutate(DES_EDO_RES = stringr::str_to_title(DES_EDO_RES),
+                  DES_DIAG_FINAL = stringr::str_to_title(DES_DIAG_FINAL))  |>
+    dplyr::mutate(DES_DIAG_FINAL = factor(DES_DIAG_FINAL,
+                                          levels = c("Dengue Con Signos De Alarma",
+                                                     "Dengue Grave",
+                                                     "Dengue No Grave"),
+                                          labels = c("DSA", "DG", "DNG")))  |>
+    ggplot2::ggplot(ggplot2::aes(area = value, 
+                                 fill = DES_EDO_RES,
+                                 subgroup = DES_EDO_RES,
+                                 label = DES_DIAG_FINAL)) +
+    treemapify::geom_treemap() +
+    treemapify::geom_treemap_text(fontface = "italic", 
+                                  colour = "black", 
+                                  place = "bottom",
+                                  #alpha = 0.5,
+                                  grow = F) +
+    treemapify::geom_treemap_subgroup_text(place = "middle", 
+                                           colour = "White", 
+                                           #alpha = 0.8, 
+                                           grow = T)+
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::scale_fill_viridis_d()
+```
+
+<div>
+#### **<span style="color:blue"> Casos confirmados y serotipos </span>**
+```{r casos_serotipos,out.width="100%", out.height="100%"}
+boldenr::plot_state_serotype(dataset = x, 
+                                  year = 2022, 
+                                  x_serotype  = 0.5, 
+                                  y_serotype = 0.17, 
+                                  scale_serotype = 1.7)
+```
+</div>
+</div>
+
+
+#### **<span style="color:blue"> Casos confirmados por semana </span>**
+```{r casos_semana}
+heatmap_confirmados(dataset = x, 
+                    year = 2022, 
+                    size_text = 3, 
+                    EDO = TRUE)
+```
+
+#### **<span style="color:blue"> Casos Confirmados </span>**
+```{r bumpmap_national_2022, out.width="100%", out.height="100%"}
+source('C:/Users/HOME/Dropbox/r_developments/r_dashboards/github_pages/test_dashboard/3.Functions/static_bump_map.R')
+library(dplyr)
+static_bump_map(dataset = x,
+                year = "2022",
+                state = TRUE,
+                size_text_value = 2,
+                size_text = 1,
+                country_text_x = 0.5,
+                country_text_y = 0.8,
+                line_size = 1.5,
+                pal_vir = "viridis")
+```
+
+</div>
+</body>
+</html>
+
+
+
+### **<span style="color:#7d9029"> Casos Confirmados por JS & Municipio </span>**
+<html>
+<head>
+<style>
+.myDiv1 {
+  border: 2px outset darkgreen;
+  background-color: darkgreen;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="myDiv1">
+  <h2></h2>
+  <p></p>
+
+#### **<span style="color:#7d9029">Casos por Semana & Jurisdición </span>**
+```{r}
+heatmap_confirmados(dataset = x, 
+                    year = 2022, 
+                    size_text = 3,
+                    state = "QUINTANA ROO",
+                    JS = TRUE,
+                    MPO = TRUE,
+                    EDO = FALSE)
+```
+
+#### **<span style="color:#7d9029">Casos por Semana & Municipio</span>**
+```{r}
+heatmap_confirmados(dataset = x, 
+                    year = 2022, 
+                    size_text = 3,
+                    state = "QUINTANA ROO",
+                    JS = FALSE,
+                    MPO = TRUE,
+                    EDO = FALSE)
+```
+</div>
+</body>
+</html>
+
+
+### **<span style="color:#7d9029"> Hospitalizados por JS & Municipio </span>**
+<html>
+<head>
+<style>
+.myDiv1 {
+  border: 2px outset darkgreen;
+  background-color: darkgreen;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="myDiv1">
+  <h2></h2>
+  <p></p>
+
+#### **<span style="color:#7d9029">Casos Hospitalizados por Semana & Jurisdición </span>**
+```{r}
+heatmap_hospitalizados(dataset = x,
+                       year = 2022,
+                       size_text = 3,
+                       state = "QUINTANA ROO",
+                       JS = TRUE)
+```
+
+#### **<span style="color:#7d9029">Casos Hospitalizados por Semana & Municipio</span>**
+```{r}
+heatmap_hospitalizados(dataset = x,
+                       year = 2022,
+                       size_text = 3,
+                       state = "QUINTANA ROO",
+                       JS = FALSE)
+```
+</div>
+</body>
+</html>
+
+
+
