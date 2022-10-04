@@ -384,7 +384,209 @@ plotly::ggplotly(boldenr::epi_channel(x = y,
 ```
 
 
+### **<span style="color:#7d9029">Distribución de Casos </span>**
+
+```{r}
+# step 1. dengue cases geocoded ####
+load("C:/Users/HOME/OneDrive/proyects/geocoding_mex/2022/9.RData_geocoded/den2022_positivos.RData")
+y <- z[stringr::str_which(z$formatted_address,  " Mexico"),]
+
+
+# step 2. load the yucatan boundary ####
+x <- rgeomex::AGEE_inegi19_mx |>
+    dplyr::filter(CVE_ENT %in% c("23"))
+
+
+# Step 3. extract the dengue cases by state ####
+
+
+# Step 3.1 convert the dataset in sf object 
+
+y <- y |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("long", "lat"),
+                 crs = 4326)
+
+# Step 3.2 extract the dengue cases
+y <- y[x, ]
+
+
+# step 2. create the palette ####
+pal <- leaflet::colorBin(palette = fishualize::fish(n = length(unique(y$SEM)), 
+                                                    option = "Hypsypops_rubicundus",
+                                                    end = 1,
+                                                    alpha = .5),
+                         domain = y$SEM,
+                         bins = 10)
+
+y1 <- y  |>
+    dplyr::filter(DENGUE_SER_TRIPLEX == 1)
+
+y2 <- y  |>
+    dplyr::filter(DENGUE_SER_TRIPLEX == 2)
+y3 <- y  |>
+    dplyr::filter(DENGUE_SER_TRIPLEX == 3)
+y4 <- y  |>
+    dplyr::filter(DENGUE_SER_TRIPLEX == 4)
+########################
+
+# step 3. generate maps ####
+l <- leaflet::leaflet(y)  |> 
+    leaflet::addTiles()  |> 
+    leaflet::addCircleMarkers(color = ~pal(SEM),
+                              group = "DENV",
+                              stroke = FALSE, 
+                              opacity = 0.5,
+                              fillOpacity = 0.5)  |>
+    leaflet::addCircleMarkers(data = y1,
+                              group = "Serotipo 1",
+                              color = ~pal(SEM),
+                              stroke = FALSE, 
+                              opacity = 0.5,
+                              fillOpacity = 0.5)  |>
+    leaflet::addCircleMarkers(data = y2,
+                              group = "Serotipo 2",
+                              color = ~pal(SEM),
+                              stroke = FALSE, 
+                              opacity = 0.5,
+                              fillOpacity = 0.5)  |>
+    leaflet::addCircleMarkers(data = y3,
+                              group = "Serotipo 3",
+                              color = ~pal(SEM),
+                              stroke = FALSE, 
+                              opacity = 0.5,
+                              fillOpacity = 0.5)  |>
+    leaflet::addCircleMarkers(data = y4,
+                              group = "Serotipo 4",
+                              color = ~pal(SEM),
+                              stroke = FALSE, 
+                              opacity = 0.5,
+                              fillOpacity = 0.5)  |>
+    #leaflet::addPolylines(data = rgeomex::loc_inegi19_mx,
+    #                     color = "darkblue",
+    #                    label = ~NOMGEO,
+    #                   group = "Localidad",
+    #                  fillOpacity = .7,
+    #                 opacity = .9,
+    #                weight = .5)  |>
+    #leaflet.extras::addSearchFeatures(targetGroups = "Localidad",
+    #   options = leaflet.extras::searchFeaturesOptions(zoom #= 14, 
+    #openPopup = FALSE))  |>
+    
+leaflet::addLegend("bottomright", 
+                   group = "legend",
+                   pal = pal, 
+                   values = ~SEM,
+                   title = "Semana Epidemiológica",
+                   opacity = 0.9,
+                   position = "bottomleft")
+
+# Step 4. generate the tiles and provider ###
+esri <- grep("^Esri|CartoDB|OpenStreetMap", 
+             leaflet::providers, 
+             value = TRUE)
+
+for (provider in esri) {
+    l <- l  |> leaflet::addProviderTiles(provider, 
+                                         group = provider)
+}
+
+l  |>
+    leaflet::addLayersControl(baseGroups = names(esri),
+                              overlayGroups = c("legend", "DENV", "Serotipo 1",
+                                                "Serotipo 2", "Serotipo 3",
+                                                "Serotipo 4"),
+                              options = leaflet::layersControlOptions(collapsed = TRUE))  |>
+    leaflet::addMiniMap(tiles = esri[[1]], 
+                        toggleDisplay = TRUE,
+                        position = "bottomleft")  |>
+    htmlwidgets::onRender("
+    function(el, x) {
+      var myMap = this;
+      myMap.on('baselayerchange',
+        function (e) {
+          myMap.minimap.changeLayer(L.tileLayer.provider(e.name));
+        })
+    }")
+
+```
 </div>
 </body>
 </html>
 
+**Vigilancia Entomológica**
+=====================================  
+
+Column {.tabset}
+------------------------------------
+
+### **<span style="color:#660033"> Ovitrampas </span>**
+<html>
+<head>
+<style>
+.myDiv1 {
+  border: 2px outset darkgreen;
+  background-color: darkgreen;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="myDiv1">
+  <h2></h2>
+  <p></p>
+#### **<span style="color:#7d9029">Áreas urbanas con Vigilancia Entomológica </span>**
+```{r echo=FALSE, error=TRUE, message=FALSE,dpi=300, warning=FALSE, fig.align = "center",out.width="90%", cache = TRUE, fig.show = "hold"}
+# 1.load the AGEM of veracruz #####
+library(magrittr)
+library(sf)
+mun <- rgeomex::AGEM_inegi19_mx  |>
+    dplyr::filter(CVE_ENT == "23")
+
+# Step 2. load the urban localities ####
+urb_loc <- rgeomex::loc_inegi19_mx  |>
+    dplyr::filter(CVE_ENT == "23")
+
+# Step 3. extract the high risk localities ####
+# Step 3.1 load the cenaprece metas ####
+x <- readxl::read_xls(path = "Datasets/repMetas.xls",
+                      sheet = 1, skip = 11)  |>
+    dplyr::select(1:2, 7:10, 14, 16)  |>
+    dplyr::mutate(cve_mun = stringr::str_sub(MUNICIPIO, start = 1, end = 3),
+                  cve_loc = stringr::str_sub(LOCALIDAD, start = 1, end = 4))
+# Step 3.2 extract high risk localities 
+urb_loc_hr <- urb_loc  |>
+    dplyr::filter(CVE_MUN %in% c(x$cve_mun))  |>
+    dplyr::filter(CVE_LOC %in% c(x$cve_loc))
+
+# Step 4. extract the localities with ovitraps ####
+y <- readxl::read_xls(path = "Datasets/repMetas.xls",
+                      sheet = 1, skip = 11)  |>
+    dplyr::select(1:2, 7:10, 14, 16)  |>
+    dplyr::mutate(cve_mun = stringr::str_sub(MUNICIPIO, start = 1, end = 3),
+                  cve_loc = stringr::str_sub(LOCALIDAD, start = 1, end = 4))  |>
+    dplyr::filter(`CON OVITRAMPAS` == "Sí")
+urb_loc_hr_ovi <- urb_loc  |>
+    dplyr::filter(CVE_MUN %in% c(y$cve_mun))  |>
+    dplyr::filter(CVE_LOC %in% c(y$cve_loc, "0037"))
+
+# Step 5. visualization ####
+ggplot2::ggplot() +
+    ggplot2::geom_sf(data = mun, fill = "gray90", col = "gray90") + 
+    #ggplot2::geom_sf(data = urb_loc, fill = "gray40") +
+    ggplot2::geom_sf(data = urb_loc_hr, fill = "gray") + 
+    ggplot2::geom_sf(data = urb_loc_hr_ovi, fill = "red") +
+    ggplot2::theme_void() +
+    ggspatial::annotation_north_arrow(location = "tr") +
+    ggspatial::annotation_scale() +
+    ggplot2::coord_sf(xlim = c(-90.5, -87.05), 
+                    ylim = c(19.5, 22), 
+                     expand = FALSE)
+
+```
+
+</div>
+</body>
+</html>
